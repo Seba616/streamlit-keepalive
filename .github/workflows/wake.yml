@@ -1,0 +1,28 @@
+name: Wake Streamlit Apps
+
+on:
+  schedule:
+    - cron: "0 */6 * * *" # cada 6 horas, en punto (00:00, 06:00, 12:00, 18:00 UTC)
+  workflow_dispatch: # permite dispararlo manualmente desde la pestaña Actions
+
+jobs:
+  wake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout del repo
+        uses: actions/checkout@v4
+
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements.txt
+          playwright install --with-deps chromium
+
+      - name: Ejecutar keepalive
+        run: python keep_awake.py
